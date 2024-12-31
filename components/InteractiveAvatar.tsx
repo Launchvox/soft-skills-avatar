@@ -31,7 +31,7 @@ export default function InteractiveAvatar() {
   const [stream, setStream] = useState<MediaStream>();
   const [debug, setDebug] = useState<string>();
   const [knowledgeId, setKnowledgeId] = useState<string>("");
-  const [avatarId, setAvatarId] = useState<string>("");
+  const [avatarId, setAvatarId] = useState<string>("Wayne_20240711");
   const [language, setLanguage] = useState<string>('en');
 
   const [data, setData] = useState<StartAvatarResponse>();
@@ -89,7 +89,7 @@ export default function InteractiveAvatar() {
     });
     try {
       const res = await avatar.current.createStartAvatar({
-        quality: AvatarQuality.Low,
+        quality: AvatarQuality.High,
         avatarName: avatarId,
         knowledgeId: knowledgeId, // Or use a custom `knowledgeBase`.
         voice: {
@@ -119,8 +119,7 @@ export default function InteractiveAvatar() {
 
       return;
     }
-    // speak({ text: text, task_type: TaskType.REPEAT })
-    await avatar.current.speak({ text: text, taskType: TaskType.REPEAT, taskMode: TaskMode.SYNC }).catch((e) => {
+    await avatar.current.speak({ text: text, taskType: TaskType.TALK, taskMode: TaskMode.ASYNC }).catch((e) => {
       setDebug(e.message);
     });
     setIsLoadingRepeat(false);
