@@ -41,13 +41,37 @@ export default function InteractiveAvatar() {
   const [chatMode, setChatMode] = useState("text_mode");
   const [isUserTalking, setIsUserTalking] = useState(false);
 
+  async function getToken(apiKey:string) {
+    try {
+      const res = await fetch(
+        "https://api.heygen.com/v1/streaming.create_token",
+        {
+          method: "POST",
+          headers: {
+            "x-api-key": apiKey,
+          },
+        }
+      );
+      const data = await res.json();
+      console.log('Token:', data.data.token);
+      return data.data.token;
+    } catch (error) {
+      console.error("Error retrieving access token:", error);
+      return null;
+    }
+  }
+  
   async function fetchAccessToken() {
     try {
-      const response = await fetch("/api/get-access-token", {
-        method: "POST",
-      });
-      const token = await response.text();
+      const urlParams = new URLSearchParams(window.location.search);
+      const apiKey = urlParams.get('apiKey');
 
+      if (!apiKey) {
+        throw new Error("API key is missing from query string");
+      }
+      
+      const token = await getToken(apiKey);
+   
       console.log("Access Token:", token); // Log the token to verify
 
       return token;
@@ -91,19 +115,19 @@ export default function InteractiveAvatar() {
       const res = await avatar.current.createStartAvatar({
         quality: AvatarQuality.High,
         avatarName: avatarId,
-        knowledgeId: knowledgeId, // Or use a custom `knowledgeBase`.
+        knowledgeBase: "Roleplay Scenario: Consultation with Dr. Elvee Background: Dr. Elvee is a knowledgeable and experienced physician who is also well-versed in the latest advancements in immersive virtual, augmented, and mixed reality technologies. Dr. Elvee has recently collaborated with Launchvox, an independent agency specializing in these technologies, to explore their applications in medical training and patient care. Prompt: You are Dr. Elvee, a physician with expertise in both medicine and immersive technologies. You are meeting with a patient who is curious about how these technologies can be used in healthcare. The patient has heard about Launchvox and their innovative work in virtual, augmented, and mixed reality experiences. They want to know more about how these technologies can improve medical training and patient outcomes. Key Information from Launchvox: Launchvox was founded in 2021 and specializes in immersive virtual, augmented, and mixed reality experiences, as well as 3D/2D animations and interactive content. The agency is known for its high-quality standards, dedicated team, and respectful approach to client relations. Launchvox's team includes experts in various fields, such as interactive development, IT management, HR, creative project management, training and simulation, technical artistry, asset creation, immersive experience programming, and software engineering. The agency's driving force is a passion for their work and a commitment to understanding and enhancing their clients' visions. Bob Dyce is the CEO of Launchvox, leading the company with a visionary approach and a deep understanding of immersive technologies. Ian Berget is the Interactive Developer and CTO, specializing in Unity experience creation and development. Roleplay Objectives: 1. Explain to the patient how immersive technologies can be used in medical training (e.g., virtual simulations for surgical procedures, augmented reality for anatomy lessons). 2. Discuss the potential benefits of these technologies for patient care (e.g., virtual reality for pain management, augmented reality for patient education). 3. Highlight Launchvox's expertise and how their innovative solutions can be applied in the healthcare field. Example Dialogue: Patient: 'I've heard about this company called Launchvox that does amazing work with virtual and augmented reality. How can these technologies be used in healthcare?' Dr. Elvee: 'Launchvox is indeed a pioneer in immersive technologies. They create virtual and augmented reality experiences that can revolutionize medical training. For example, we can use virtual simulations to practice surgical procedures in a risk-free environment. This helps medical students and professionals refine their skills without any danger to real patients.' Patient: 'That sounds incredible! Can these technologies also help patients directly?' Dr. Elvee: 'Absolutely. Virtual reality can be used for pain management by immersing patients in calming environments, which can reduce their perception of pain. Augmented reality can help in patient education by providing interactive, 3D visualizations of medical conditions and treatments, making it easier for patients to understand their health.'",// Or use a custom `knowledgeId`.
         voice: {
           rate: 1.5, // 0.5 ~ 1.5
-          emotion: VoiceEmotion.EXCITED,
+          emotion: VoiceEmotion.SERIOUS,
         },
         language: language,
-        disableIdleTimeout: true,
+        disableIdleTimeout: false,
       });
 
       setData(res);
       // default to voice mode
       await avatar.current?.startVoiceChat({
-        useSilencePrompt: false
+        useSilencePrompt: true
       });
       setChatMode("voice_mode");
     } catch (error) {
@@ -218,14 +242,6 @@ export default function InteractiveAvatar() {
           ) : !isLoadingSession ? (
             <div className="h-full justify-center items-center flex flex-col gap-8 w-[500px] self-center">
               <div className="flex flex-col gap-2 w-full">
-                <p className="text-sm font-medium leading-none">
-                  Custom Knowledge ID (optional)
-                </p>
-                <Input
-                  placeholder="Enter a custom knowledge ID"
-                  value={knowledgeId}
-                  onChange={(e) => setKnowledgeId(e.target.value)}
-                />
                 <p className="text-sm font-medium leading-none">
                   Custom Avatar ID (optional)
                 </p>
