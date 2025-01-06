@@ -15,13 +15,9 @@ Feel free to play around with the existing code and please leave any feedback fo
 
 3. Run `npm install` (assuming you have npm installed. If not, please follow these instructions: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm/)
 
-4. Enter your HeyGen Enterprise API Token or Trial Token in the `.env` file. Replace `HEYGEN_API_KEY` with your API key. This will allow the Client app to generate secure Access Tokens with which to create interactive sessions.
+4. Run `npm run dev`
 
-   You can retrieve either the API Key or Trial Token by logging in to HeyGen and navigating to this page in your settings: [https://app.heygen.com/settings?nav=API]. NOTE: use the trial token if you don't have an enterprise API token yet.
-
-5. (Optional) If you would like to use the OpenAI features, enter your OpenAI Api Key in the `.env` file.
-
-6. Run `npm run dev`
+5. Enter your HeyGen Enterprise API Token or Trial Token in the url in this format http://localhost:3000/?apiKey=`YOUR_KEY_HERE`
 
 ### Difference between Trial Token and Enterprise API Token
 
